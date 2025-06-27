@@ -61,7 +61,7 @@ export default function Home() {
 
             <Link
               href="/login"
-              className="place-items-center group rounded-lg border border-gray-300 dark:border-neutral-700 px-6 py-4 transition-colors hover:border-gray-400 hover:bg-gray-100 hover:dark:border-neutral-600 hover:dark:bg-neutral-800/30 min-w-[160px]"
+              className="place-items-center group rounded-lg border border-gray-300 dark:border-neutral-700 px-6 py-4 transition-colors hover:border-gray-400 hover:bg-gray-100 hover:dark:border-neutral-600 hover:dark:bg-neutral-800 hover:dark:bg-opacity-40 min-w-[160px]"
             >
               <h2 className={`mb-3 text-2xl font-semibold`}>
                 Login{' '}
