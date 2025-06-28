@@ -2,9 +2,33 @@
 // app/page.tsx
 import Image from 'next/image'
 import Link from 'next/link'
+import { useEffect } from 'react'
 import GradientBackground from '../components/ui/GradientBackground'
 
 export default function Home() {
+  useEffect(() => {
+    // Apply theme from localStorage if available
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      const userData = JSON.parse(savedUser);
+      const theme = userData.theme || 'system';
+      const root = document.documentElement;
+      
+      if (theme === 'dark') {
+        root.classList.add('dark');
+      } else if (theme === 'light') {
+        root.classList.remove('dark');
+      } else {
+        // System theme - check system preference
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          root.classList.add('dark');
+        } else {
+          root.classList.remove('dark');
+        }
+      }
+    }
+  }, []);
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24 relative">
       <GradientBackground />
@@ -80,7 +104,7 @@ export default function Home() {
       {/* By Yash Verma & Rahul Paul - moved to bottom right */}
       <div className="fixed bottom-12 right-12 z-20">
         <p className="flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 font-mono text-sm">
-          By <a href="https://github.com/yash-yv-verma" target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-600 dark:text-blue-400 mx-1">Yash Verma</a> & Rahul Paul&nbsp;
+          By <a href="https://github.com/yash-yv-verma" target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-600 dark:text-blue-400 mx-1">Yash Verma</a> & <a href="https://github.com/RPaul07" target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-600 dark:text-blue-400 mx-1">Rahul Paul</a>&nbsp;
           <Link href="/api/python"> </Link>
         </p>
       </div>
