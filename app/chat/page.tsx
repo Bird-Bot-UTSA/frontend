@@ -4,6 +4,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import GradientBackground from '../../components/ui/GradientBackground';
 
 // Interface for message objects
@@ -20,6 +21,7 @@ const ChatPage: React.FC = () => {
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [isChatActive, setIsChatActive] = useState(false);
+    const [user, setUser] = useState({ name: 'User', email: '' });
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -29,6 +31,32 @@ const ChatPage: React.FC = () => {
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
+    useEffect(() => {
+        // Load user data from localStorage
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+            const userData = JSON.parse(savedUser);
+            setUser(userData);
+            
+            // Apply the saved theme
+            const theme = userData.theme || 'system';
+            const root = document.documentElement;
+            
+            if (theme === 'dark') {
+                root.classList.add('dark');
+            } else if (theme === 'light') {
+                root.classList.remove('dark');
+            } else {
+                // System theme - check system preference
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    root.classList.add('dark');
+                } else {
+                    root.classList.remove('dark');
+                }
+            }
+        }
+    }, []);
 
     // Handle the user sending a message
     const handleSend = async (e: React.FormEvent) => {
@@ -105,6 +133,15 @@ const ChatPage: React.FC = () => {
                 
                 {/* Header */}
                 <div className="flex items-center justify-between py-6 bg-transparent backdrop-blur-2xl mt-6">
+                    <div className="flex-1"></div>
+                    {isChatActive && (
+                        <Link 
+                            href="/profile" 
+                            className="px-4 py-2 bg-white/10 dark:bg-black/10 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-neutral-800 text-gray-900 dark:text-white hover:bg-white/20 dark:hover:bg-black/20 transition-colors duration-200 font-mono text-sm"
+                        >
+                            {user.name}
+                        </Link>
+                    )}
                 </div>
 
                 {/* Main Content Area */}
