@@ -2,32 +2,75 @@
 "use client";
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
+import { useTheme } from '../../lib/hooks/useTheme';
+import { DEFAULT_USER_DATA } from '../../lib/constants';
+import Logo from '../../components/ui/Logo';
+import FormInput from '../../components/ui/FormInput';
+import Button from '../../components/ui/Button';
+import Card from '../../components/ui/Card';
 import GradientBackground from '../../components/ui/GradientBackground';
 
 const LoginPage: React.FC = () => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const { updateUser } = useTheme();
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    });
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Handle login logic here
-        const userData = { name, email, language: 'English', theme: 'system' };
-        localStorage.setItem('user', JSON.stringify(userData));
-        console.log('Login:', { name, email, password });
-        
-        // Apply default theme
-        const root = document.documentElement;
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            root.classList.add('dark');
-        } else {
-            root.classList.remove('dark');
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+        // Clear error when user starts typing
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: '' }));
         }
+    };
+
+    const validateForm = () => {
+        const newErrors: { [key: string]: string } = {};
+
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            newErrors.email = 'Please enter a valid email';
+        }
+
+        if (!formData.password.trim()) {
+            newErrors.password = 'Password is required';
+        } else if (formData.password.length < 6) {
+            newErrors.password = 'Password must be at least 6 characters';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         
-        // Redirect to chat page after login
-        window.location.href = '/chat';
+        if (!validateForm()) {
+            return;
+        }
+
+        try {
+            // TODO: Implement actual login logic with API
+            // For now, create a mock user
+            const mockUser = {
+                name: 'Demo User',
+                email: formData.email,
+                ...DEFAULT_USER_DATA
+            };
+            
+            updateUser(mockUser);
+            
+            // Redirect to chat page
+            window.location.href = '/chat';
+        } catch (error) {
+            console.error('Login error:', error);
+            setErrors({ general: 'Login failed. Please try again.' });
+        }
     };
 
     return (
@@ -35,96 +78,76 @@ const LoginPage: React.FC = () => {
             <GradientBackground />
             
             <div className="z-10 w-full max-w-md">
-                {/* Logo */}
-                <div className="flex justify-center mb-8">
-                    <Image
-                        className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-                        src="/MathAI.png"
-                        alt="Math.AI Logo"
-                        width={240}
-                        height={49}
-                        priority
-                    />
-                </div>
-
-                {/* Login Form */}
-                <div className="bg-white/10 dark:bg-black/10 backdrop-blur-sm rounded-xl p-8 border border-gray-200 dark:border-neutral-800">
-                    <h1 className="text-2xl font-semibold text-center mb-6 text-gray-900 dark:text-white font-mono">
+                <div className="text-center mb-8">
+                    <Logo size="large" className="mx-auto mb-6" />
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-mono">
                         Welcome Back
                     </h1>
-                    
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 font-mono">
-                                Full Name
-                            </label>
-                            <input
-                                id="name"
-                                type="text"
-                                placeholder="Enter your full name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-lg bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-2xl font-mono"
-                                required
-                            />
-                        </div>
+                    <p className="text-gray-600 dark:text-gray-400 mt-2 font-mono">
+                        Sign in to continue learning
+                    </p>
+                </div>
 
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 font-mono">
-                                Email
-                            </label>
-                            <input
-                                id="email"
-                                type="email"
-                                placeholder="Enter your email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-lg bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-2xl font-mono"
-                                required
-                            />
-                        </div>
-                        
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 font-mono">
-                                Password
-                            </label>
-                            <input
-                                id="password"
-                                type="password"
-                                placeholder="Enter your password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-lg bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-2xl font-mono"
-                                required
-                            />
-                        </div>
-                        
-                        <button 
-                            type="submit" 
-                            className="w-full px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 font-mono font-medium"
-                        >
+                <Card className="p-8">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {errors.general && (
+                            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                                <p className="text-red-600 dark:text-red-400 text-sm font-mono">
+                                    {errors.general}
+                                </p>
+                            </div>
+                        )}
+
+                        <FormInput
+                            id="email"
+                            name="email"
+                            label="Email"
+                            type="email"
+                            placeholder="Enter your email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            required
+                        />
+                        {errors.email && (
+                            <p className="text-red-500 text-sm font-mono">{errors.email}</p>
+                        )}
+
+                        <FormInput
+                            id="password"
+                            name="password"
+                            label="Password"
+                            type="password"
+                            placeholder="Enter your password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            required
+                        />
+                        {errors.password && (
+                            <p className="text-red-500 text-sm font-mono">{errors.password}</p>
+                        )}
+
+                        <Button type="submit" className="w-full">
                             Sign In
-                        </button>
+                        </Button>
                     </form>
-                    
+
                     <div className="mt-6 text-center">
-                        <p className="text-sm text-gray-600 dark:text-gray-400 font-mono">
+                        <p className="text-gray-600 dark:text-gray-400 font-mono">
                             Don't have an account?{' '}
                             <Link 
                                 href="/signup" 
-                                className="text-blue-500 hover:text-blue-600 hover:underline font-mono"
+                                className="text-blue-600 hover:text-blue-500 hover:underline font-mono"
                             >
                                 Sign up
                             </Link>
                         </p>
                     </div>
-                </div>
+                </Card>
 
-                {/* Back to Home */}
-                <div className="mt-6 text-center">
+                <div className="mt-8 text-center">
                     <Link 
                         href="/" 
-                        className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:underline font-mono"
+                        className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:underline font-mono"
                     >
                         ← Back to Home
                     </Link>

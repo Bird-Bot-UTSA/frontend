@@ -1,126 +1,52 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, User, Globe, Palette, Save, Edit2, Check, X } from 'lucide-react';
+import { ArrowLeft, User, Globe, Palette, Edit2, Check, X } from 'lucide-react';
+import { useTheme } from '../../lib/hooks/useTheme';
+import { LANGUAGES, THEMES, DEFAULT_USER_DATA } from '../../lib/constants';
+import Logo from '../../components/ui/Logo';
+import FormSelect from '../../components/ui/FormSelect';
+import Card from '../../components/ui/Card';
 import GradientBackground from '../../components/ui/GradientBackground';
 
 const ProfilePage: React.FC = () => {
-    const [user, setUser] = useState({
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        language: 'English',
-        theme: 'system'
-    });
-
+    const { user, updateTheme, updateUser } = useTheme();
     const [isEditingName, setIsEditingName] = useState(false);
-    const [tempName, setTempName] = useState('');
-
-    const languages = [
-        { code: 'en', name: 'English' },
-        { code: 'es', name: 'Español' },
-        { code: 'fr', name: 'Français' },
-        { code: 'de', name: 'Deutsch' },
-        { code: 'it', name: 'Italiano' },
-        { code: 'pt', name: 'Português' },
-        { code: 'ru', name: 'Русский' },
-        { code: 'zh', name: '中文' },
-        { code: 'ja', name: '日本語' },
-        { code: 'ko', name: '한국어' }
-    ];
-
-    const themes = [
-        { value: 'system', label: 'System', description: 'Follows your device settings' },
-        { value: 'light', label: 'Light', description: 'Light theme' },
-        { value: 'dark', label: 'Dark', description: 'Dark theme' }
-    ];
-
-    useEffect(() => {
-        // Load user data from localStorage or API
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-            const userData = JSON.parse(savedUser);
-            setUser(userData);
-            setTempName(userData.name);
-            
-            // Apply the saved theme
-            applyTheme(userData.theme || 'system');
-        }
-    }, []);
-
-    const applyTheme = (theme: string) => {
-        const root = document.documentElement;
-        
-        if (theme === 'dark') {
-            root.classList.add('dark');
-            console.log('Applied dark theme');
-        } else if (theme === 'light') {
-            root.classList.remove('dark');
-            console.log('Applied light theme');
-        } else {
-            // System theme - check system preference
-            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                root.classList.add('dark');
-                console.log('Applied system dark theme');
-            } else {
-                root.classList.remove('dark');
-                console.log('Applied system light theme');
-            }
-        }
+    
+    // Create a default user if none exists
+    const currentUser = user || {
+        name: 'Demo User',
+        email: 'demo@example.com',
+        ...DEFAULT_USER_DATA
     };
+    
+    const [tempName, setTempName] = useState(currentUser.name);
 
     const handleNameEdit = () => {
         setIsEditingName(true);
-        setTempName(user.name);
+        setTempName(currentUser.name);
     };
 
     const handleNameSave = () => {
         if (tempName.trim()) {
-            const updatedUser = { ...user, name: tempName.trim() };
-            setUser(updatedUser);
-            localStorage.setItem('user', JSON.stringify(updatedUser));
+            updateUser({ ...currentUser, name: tempName.trim() });
         }
         setIsEditingName(false);
     };
 
     const handleNameCancel = () => {
-        setTempName(user.name);
+        setTempName(currentUser.name);
         setIsEditingName(false);
     };
 
     const handleLanguageChange = (newLanguage: string) => {
-        const updatedUser = { ...user, language: newLanguage };
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        updateUser({ ...currentUser, language: newLanguage });
     };
 
     const handleThemeChange = (newTheme: string) => {
-        console.log('Theme change requested:', newTheme);
-        
-        const updatedUser = { ...user, theme: newTheme };
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        
-        // Apply theme changes immediately
-        applyTheme(newTheme);
+        updateTheme(newTheme as 'light' | 'dark' | 'system');
     };
-
-    // Apply theme on component mount
-    useEffect(() => {
-        if (user.theme === 'dark') {
-            document.documentElement.classList.add('dark');
-        } else if (user.theme === 'light') {
-            document.documentElement.classList.remove('dark');
-        } else {
-            // System theme - check system preference
-            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        }
-    }, [user.theme]);
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center p-24 relative">
@@ -138,21 +64,14 @@ const ProfilePage: React.FC = () => {
                     </Link>
                     
                     <div className="flex justify-center">
-                        <Image
-                            className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-                            src="/MathAI.png"
-                            alt="Math.AI Logo"
-                            width={200}
-                            height={41}
-                            priority
-                        />
+                        <Logo size="header" />
                     </div>
                     
                     <div className="w-20"></div> {/* Spacer for centering */}
                 </div>
 
                 {/* Profile Card */}
-                <div className="bg-white/10 dark:bg-black/10 backdrop-blur-sm rounded-xl p-8 border border-gray-200 dark:border-neutral-800">
+                <Card className="p-8">
                     <div className="flex items-center justify-between mb-6">
                         <h1 className="text-2xl font-semibold text-gray-900 dark:text-white font-mono">
                             Profile Settings
@@ -205,7 +124,7 @@ const ProfilePage: React.FC = () => {
                                         ) : (
                                             <div className="flex">
                                                 <div className="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-l-lg text-gray-900 dark:text-white font-mono border border-gray-300 dark:border-neutral-700">
-                                                    {user.name}
+                                                    {currentUser.name}
                                                 </div>
                                                 <button
                                                     onClick={handleNameEdit}
@@ -223,7 +142,7 @@ const ProfilePage: React.FC = () => {
                                         Email
                                     </label>
                                     <p className="px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-lg text-gray-900 dark:text-white font-mono border border-gray-300 dark:border-neutral-700">
-                                        {user.email}
+                                        {currentUser.email}
                                     </p>
                                 </div>
                             </div>
@@ -236,22 +155,13 @@ const ProfilePage: React.FC = () => {
                                 Language
                             </h2>
                             
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 font-mono">
-                                    Preferred Language
-                                </label>
-                                <select
-                                    value={user.language}
-                                    onChange={(e) => handleLanguageChange(e.target.value)}
-                                    className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-lg bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-2xl font-mono"
-                                >
-                                    {languages.map((lang) => (
-                                        <option key={lang.code} value={lang.name}>
-                                            {lang.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                            <FormSelect
+                                id="language"
+                                label="Preferred Language"
+                                value={currentUser.language}
+                                onChange={(e) => handleLanguageChange(e.target.value)}
+                                options={LANGUAGES.map(lang => ({ value: lang.name, label: lang.name }))}
+                            />
                         </div>
 
                         {/* Theme Settings */}
@@ -261,25 +171,20 @@ const ProfilePage: React.FC = () => {
                                 Appearance
                             </h2>
                             
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 font-mono">
-                                    Color Scheme
-                                </label>
-                                <select
-                                    value={user.theme}
-                                    onChange={(e) => handleThemeChange(e.target.value)}
-                                    className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-lg bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-2xl font-mono"
-                                >
-                                    {themes.map((theme) => (
-                                        <option key={theme.value} value={theme.value}>
-                                            {theme.label} - {theme.description}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                            <FormSelect
+                                id="theme"
+                                label="Color Scheme"
+                                value={currentUser.theme}
+                                onChange={(e) => handleThemeChange(e.target.value)}
+                                options={THEMES.map(theme => ({ 
+                                    value: theme.value, 
+                                    label: theme.label, 
+                                    description: theme.description 
+                                }))}
+                            />
                         </div>
                     </div>
-                </div>
+                </Card>
             </div>
         </main>
     );

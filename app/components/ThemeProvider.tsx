@@ -1,49 +1,29 @@
 "use client";
 
 import { useEffect } from 'react';
+import { initializeTheme, getUserData, applyTheme } from '../../lib/theme';
 
-interface ThemeProviderProps {
-  children: React.ReactNode;
-}
-
-const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
+export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    // Initialize theme from localStorage on app startup
-    try {
-      const savedUser = localStorage.getItem('user');
-      if (savedUser) {
-        const userData = JSON.parse(savedUser);
-        const theme = userData.theme || 'system';
-        
-        applyTheme(theme);
+    // Initialize theme on mount
+    initializeTheme();
+
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleSystemThemeChange = () => {
+      const userData = getUserData();
+      if (userData?.theme === 'system') {
+        applyTheme('system');
       }
-    } catch (error) {
-      console.error('Error loading theme:', error);
-    }
+    };
+
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleSystemThemeChange);
+    };
   }, []);
 
-  const applyTheme = (theme: string) => {
-    const root = document.documentElement;
-    
-    if (theme === 'dark') {
-      root.classList.add('dark');
-      console.log('Applied dark theme');
-    } else if (theme === 'light') {
-      root.classList.remove('dark');
-      console.log('Applied light theme');
-    } else {
-      // System theme - check system preference
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        root.classList.add('dark');
-        console.log('Applied system dark theme');
-      } else {
-        root.classList.remove('dark');
-        console.log('Applied system light theme');
-      }
-    }
-  };
-
   return <>{children}</>;
-};
-
-export default ThemeProvider; 
+} 
