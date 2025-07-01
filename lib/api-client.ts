@@ -10,7 +10,7 @@ export interface LambdaResponse {
 export class APIClient {
   private baseURL: string;
 
-  constructor(baseURL: string = process.env.NEXT_PUBLIC_API_BASE_URL || '') {
+  constructor(baseURL: string = 'https://jyhcs69hk7.execute-api.us-east-1.amazonaws.com') {
     this.baseURL = baseURL;
   }
 
@@ -50,6 +50,39 @@ export class APIClient {
   // Example method for user authentication
   async authenticateUser(credentials: { email: string; password: string }): Promise<LambdaResponse> {
     return this.callLambda('auth', credentials);
+  }
+
+  // Method for user signup
+  async signupUser(userData: { 
+    user_name: string; 
+    user_email: string; 
+    user_password: string; 
+    user_age?: number 
+  }): Promise<LambdaResponse> {
+    try {
+      const response = await fetch(`${this.baseURL}/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return {
+        success: true,
+        data: result,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
   }
 }
 

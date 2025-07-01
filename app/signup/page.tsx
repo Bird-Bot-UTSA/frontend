@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { DEFAULT_USER_DATA } from '../../lib/constants';
+import { apiClient } from '../../lib/api-client';
 import Logo from '../../components/ui/Logo';
 import FormInput from '../../components/ui/FormInput';
 import Button from '../../components/ui/Button';
@@ -17,7 +18,8 @@ const SignupPage: React.FC = () => {
         name: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        age: ''
     });
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -67,18 +69,31 @@ const SignupPage: React.FC = () => {
         }
 
         try {
-            // TODO: Implement actual signup logic with API
-            // For now, create a mock user
-            const mockUser = {
-                name: formData.name.trim(),
-                email: formData.email,
-                ...DEFAULT_USER_DATA
+            // Call the Lambda function through API Gateway
+            const signupData = {
+                user_name: formData.name.trim(),
+                user_email: formData.email,
+                user_password: formData.password,
+                user_age: formData.age ? parseInt(formData.age) : undefined
             };
+
+            const response = await apiClient.signupUser(signupData);
             
-            updateUser(mockUser);
-            
-            // Redirect to chat page
-            window.location.href = '/chat';
+            if (response.success) {
+                // Create user object for local state
+                const user = {
+                    name: formData.name.trim(),
+                    email: formData.email,
+                    ...DEFAULT_USER_DATA
+                };
+                
+                updateUser(user);
+                
+                // Redirect to chat page
+                window.location.href = '/chat';
+            } else {
+                setErrors({ general: response.error || 'Signup failed. Please try again.' });
+            }
         } catch (error) {
             console.error('Signup error:', error);
             setErrors({ general: 'Signup failed. Please try again.' });
@@ -164,6 +179,19 @@ const SignupPage: React.FC = () => {
                         />
                         {errors.confirmPassword && (
                             <p className="text-red-500 text-sm font-mono">{errors.confirmPassword}</p>
+                        )}
+
+                        <FormInput
+                            id="age"
+                            name="age"
+                            label="Age (Optional)"
+                            type="number"
+                            placeholder="Enter your age"
+                            value={formData.age}
+                            onChange={handleInputChange}
+                        />
+                        {errors.age && (
+                            <p className="text-red-500 text-sm font-mono">{errors.age}</p>
                         )}
 
                         <Button type="submit" className="w-full">
