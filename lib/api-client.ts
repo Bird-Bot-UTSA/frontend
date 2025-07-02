@@ -10,8 +10,11 @@ export interface LambdaResponse {
 export class APIClient {
   private baseURL: string;
 
-  constructor(baseURL: string = 'https://jyhcs69hk7.execute-api.us-east-1.amazonaws.com') {
-    this.baseURL = baseURL;
+  constructor(baseURL?: string) {
+    this.baseURL = baseURL || process.env.NEXT_PUBLIC_API || 'https://jyhcs69hk7.execute-api.us-east-1.amazonaws.com';
+    // Remove trailing slash to prevent double slashes
+    this.baseURL = this.baseURL.replace(/\/$/, '');
+    console.log('APIClient initialized with baseURL:', this.baseURL);
   }
 
   // Generic method to call any Lambda function
@@ -57,10 +60,14 @@ export class APIClient {
     user_name: string; 
     user_email: string; 
     user_password: string; 
-    user_age?: number 
+    user_age?: number;
+    user_school?: string;
   }): Promise<LambdaResponse> {
     try {
-      const response = await fetch(`${this.baseURL}/signup`, {
+      console.log('Sending signup data:', userData);
+      
+      // Use local proxy to avoid CORS issues
+      const response = await fetch('/api/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,16 +75,27 @@ export class APIClient {
         body: JSON.stringify(userData),
       });
 
+      console.log('Response status:', response.status);
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
 
       const result = await response.json();
+      console.log('Signup API response:', result);
+      
       return {
         success: true,
         data: result,
       };
     } catch (error) {
+      console.error('Signup API error:', error);
+      console.error('Error details:', {
+        name: error instanceof Error ? error.name : 'Unknown',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined
+      });
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',

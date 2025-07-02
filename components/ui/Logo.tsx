@@ -36,6 +36,7 @@ const Logo: React.FC<LogoProps> = ({
       width={width}
       height={height}
       priority={priority}
+      style={{ width: 'auto', height: 'auto' }}
     />
   );
 };

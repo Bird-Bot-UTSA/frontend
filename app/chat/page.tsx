@@ -8,6 +8,7 @@ import { useTheme } from '../../lib/hooks/useTheme';
 import Logo from '../../components/ui/Logo';
 import GradientBackground from '../../components/ui/GradientBackground';
 
+
 interface Message {
     id: string;
     text: string;
@@ -182,7 +183,7 @@ const ChatPage: React.FC = () => {
                 )}
 
                 {/* Input Area */}
-                <div className="flex items-center space-x-4 bg-white/10 dark:bg-black/10 backdrop-blur-sm p-4 rounded-2xl border border-gray-200/20 dark:border-gray-700/20">
+                <div className="flex items-center space-x-4 bg-white/10 dark:bg-black/10 backdrop-blur-sm p-4 rounded-2xl border-2 border-gray-300 dark:border-gray-600 shadow-lg">
                     <input
                         ref={inputRef}
                         type="text"
@@ -191,12 +192,12 @@ const ChatPage: React.FC = () => {
                         onKeyPress={handleKeyPress}
                         onFocus={handleInputFocus}
                         placeholder="Type your message..."
-                        className="flex-1 px-4 py-3 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none font-mono"
+                        className="flex-1 px-4 py-3 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono border-0"
                     />
                     <button
                         onClick={handleSendMessage}
                         disabled={!inputValue.trim() || isTyping}
-                        className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-xl transition-colors duration-200 disabled:cursor-not-allowed"
+                        className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-xl transition-colors duration-200 disabled:cursor-not-allowed border-2 border-blue-600 hover:border-blue-700"
                     >
                         <Send className="w-4 h-4" />
                     </button>

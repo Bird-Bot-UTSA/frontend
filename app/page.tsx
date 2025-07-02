@@ -27,7 +27,7 @@ export default function HomePage() {
       </div>
 
       <div className="relative flex place-items-center mt-16">
-        <Logo size="large" />
+        <Logo size="large" priority={true} />
       </div>
       
       <div className="mb-0 flex flex-col lg:flex-row gap-6 justify-center items-center max-w-4xl mx-auto">
