@@ -8,6 +8,10 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      colors: {
+        pms1665: '#FF6900', // PMS 1665 Orange
+        pms289: '#00162A',  // PMS 289 Blue (darker)
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
