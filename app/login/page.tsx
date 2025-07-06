@@ -100,34 +100,34 @@ const LoginPage: React.FC = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <FormInput
-                                    id="email"
-                                    name="email"
-                                    label="Email"
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    value={formData.email}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                                {errors.email && (
+                        <FormInput
+                            id="email"
+                            name="email"
+                            label="Email"
+                            type="email"
+                            placeholder="Enter your email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            required
+                        />
+                        {errors.email && (
                                     <p className="text-red-500 text-sm font-mono mt-1">{errors.email}</p>
-                                )}
+                        )}
                             </div>
                             <div>
-                                <FormInput
-                                    id="password"
-                                    name="password"
-                                    label="Password"
-                                    type="password"
-                                    placeholder="Enter your password"
-                                    value={formData.password}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                                {errors.password && (
+                        <FormInput
+                            id="password"
+                            name="password"
+                            label="Password"
+                            type="password"
+                            placeholder="Enter your password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            required
+                        />
+                        {errors.password && (
                                     <p className="text-red-500 text-sm font-mono mt-1">{errors.password}</p>
-                                )}
+                        )}
                             </div>
                         </div>
 
