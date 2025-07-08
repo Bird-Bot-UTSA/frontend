@@ -102,7 +102,47 @@ export class APIClient {
       };
     }
   }
+
+  // Method for user login
+  async loginUser(loginData: {
+    user_email: string;
+    user_password: string;
+  }): Promise<LambdaResponse> {
+    try {
+      console.log('Sending login data:', loginData);
+      // Use local proxy to avoid CORS issues
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginData),
+      });
+
+      console.log('Login response status:', response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Login API response:', result);
+      return {
+        success: true,
+        data: result,
+      };
+    } catch (error) {
+      console.error('Login API error:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
+  }
 }
 
 // Export a default instance
 export const apiClient = new APIClient(); 
+
+export default apiClient; 

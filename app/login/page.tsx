@@ -10,6 +10,7 @@ import FormInput from '../../components/ui/FormInput';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import GradientBackground from '../../components/ui/GradientBackground';
+import apiClient from '../../lib/api-client';
 
 const LoginPage: React.FC = () => {
     const { updateUser } = useTheme();
@@ -55,18 +56,24 @@ const LoginPage: React.FC = () => {
         }
 
         try {
-            // TODO: Implement actual login logic with API
-            // For now, create a mock user
-            const mockUser = {
-                name: 'Demo User',
-                email: formData.email,
-                ...DEFAULT_USER_DATA
-            };
-            
-            updateUser(mockUser);
-            
-            // Redirect to chat page
-            window.location.href = '/chat';
+            // Call the real login API
+            const response = await apiClient.loginUser({
+                user_email: formData.email,
+                user_password: formData.password,
+            });
+
+            if (response.success) {
+                // Store user data (including uid) in updateUser
+                const user = {
+                    email: formData.email,
+                    uid: response.data.uid,
+                    ...DEFAULT_USER_DATA
+                };
+                updateUser(user);
+                window.location.href = '/chat';
+            } else {
+                setErrors({ general: response.error || 'Login failed. Please try again.' });
+            }
         } catch (error) {
             console.error('Login error:', error);
             setErrors({ general: 'Login failed. Please try again.' });
