@@ -57,7 +57,7 @@ const ChatPage: React.FC = () => {
         setTimeout(() => {
             const aiMessage: Message = {
                 id: (Date.now() + 1).toString(),
-                text: `I understand you said: "${userMessage.text}". This is a simulated response. In a real implementation, this would connect to your AI backend.`,
+                text: `I understand you're asking about: "${userMessage.text}". This is a simulated response. In a real implementation, I would help you with programming concepts, debug your code, explain algorithms, or assist with any CS-related questions you have.`,
                 isUser: false,
                 timestamp: new Date()
             };
@@ -123,8 +123,8 @@ const ChatPage: React.FC = () => {
                 <div className="flex flex-col items-center">
                     <Logo size="large" />
                     {!isChatActive && (
-                        <p className="text-xl text-gray-600 dark:text-gray-400 font-mono text-center mt-2">
-                            Start a conversation to begin learning
+                        <p className="text-xl text-white-600 dark:text-white-400 font-mono text-center mt-2">
+                            Start a conversation to get programming help
                         </p>
                     )}
                 </div>
@@ -197,7 +197,7 @@ const ChatPage: React.FC = () => {
                     <button
                         onClick={handleSendMessage}
                         disabled={!inputValue.trim() || isTyping}
-                        className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-xl transition-colors duration-200 disabled:cursor-not-allowed border-2 border-blue-600 hover:border-blue-700"
+                        className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400/50 disabled:border-blue-400/50 text-white rounded-xl transition-colors duration-200 disabled:cursor-not-allowed border-2 border-blue-600 hover:border-blue-700"
                     >
                         <Send className="w-4 h-4" />
                     </button>

@@ -1,15 +1,168 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
+interface Node {
+  x: number;
+  y: number;
+  connections: number[];
+  pulse: number;
+}
+
+interface NeuralNetworkProps {
+  className?: string;
+  subtle?: boolean;
+}
+
+const NeuralNetwork: React.FC<NeuralNetworkProps> = ({ className = "", subtle = false }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas size
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Neural network configuration - more vibrant for home page, clearly visible for other pages
+    const nodeCount = subtle ? 25 : 35;
+    const nodes: Node[] = [];
+    const connectionDistance = subtle ? 140 : 180;
+    const pulseSpeed = subtle ? 0.018 : 0.025;
+
+    // Initialize nodes
+    for (let i = 0; i < nodeCount; i++) {
+      nodes.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        connections: [],
+        pulse: Math.random() * Math.PI * 2
+      });
+    }
+
+    // Find connections between nodes
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const nodeA = nodes[i];
+        const nodeB = nodes[j];
+        if (nodeA && nodeB) {
+          const distance = Math.sqrt(
+            Math.pow(nodeA.x - nodeB.x, 2) + 
+            Math.pow(nodeA.y - nodeB.y, 2)
+          );
+          if (distance < connectionDistance) {
+            nodeA.connections.push(j);
+            nodeB.connections.push(i);
+          }
+        }
+      }
+    }
+
+    // Animation loop
+    const animate = () => {
+      // Clear canvas with fade effect - more vibrant for home page, clearly visible for other pages
+      const fadeOpacity = subtle ? 0.12 : 0.15;
+      ctx.fillStyle = `rgba(0, 22, 42, ${fadeOpacity})`; // PMS 289 background
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Update node pulses
+      nodes.forEach(node => {
+        node.pulse += pulseSpeed;
+      });
+
+      // Draw connections
+      nodes.forEach((node, i) => {
+        node.connections.forEach(connectionIndex => {
+          const connectedNode = nodes[connectionIndex];
+          if (connectedNode) {
+            const distance = Math.sqrt(
+              Math.pow(node.x - connectedNode.x, 2) + 
+              Math.pow(node.y - connectedNode.y, 2)
+            );
+
+            // Calculate connection opacity based on pulse - more vibrant for home page, clearly visible for other pages
+            const pulse1 = Math.sin(node.pulse);
+            const pulse2 = Math.sin(connectedNode.pulse);
+            const avgPulse = (pulse1 + pulse2) / 2;
+            const baseOpacity = subtle ? 0.12 : 0.15;
+            const pulseOpacity = subtle ? 0.35 : 0.5;
+            const opacity = baseOpacity + (avgPulse * pulseOpacity);
+            
+            ctx.strokeStyle = `rgba(255, 105, 0, ${opacity})`; // PMS 1665 Orange
+            ctx.lineWidth = subtle ? 1.2 : 1.5;
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(connectedNode.x, connectedNode.y);
+            ctx.stroke();
+          }
+        });
+      });
+
+      // Draw nodes
+      nodes.forEach(node => {
+        const pulse = Math.sin(node.pulse);
+        const baseGlow = subtle ? 0.3 : 0.4;
+        const pulseGlow = subtle ? 0.4 : 0.6;
+        const glowIntensity = baseGlow + (pulse * pulseGlow);
+        const baseSize = subtle ? 3 : 4;
+        const pulseSize = subtle ? 2 : 3;
+        const nodeSize = baseSize + (pulse * pulseSize);
+
+        // Draw glow - clearly visible for other pages, larger and brighter for home
+        const glowRadius = subtle ? 18 : 25;
+        const gradient = ctx.createRadialGradient(
+          node.x, node.y, 0,
+          node.x, node.y, glowRadius
+        );
+        gradient.addColorStop(0, `rgba(255, 105, 0, ${glowIntensity})`); // PMS 1665 Orange
+        gradient.addColorStop(1, 'rgba(255, 105, 0, 0)');
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, glowRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Draw core node - clearly visible for other pages, brighter for home
+        const coreOpacity = subtle ? 0.6 : 0.8;
+        ctx.fillStyle = `rgba(255, 105, 0, ${coreOpacity + glowIntensity * 0.5})`; // PMS 1665 Orange
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, nodeSize, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+    };
+  }, [subtle]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className={`fixed inset-0 pointer-events-none ${subtle ? 'opacity-35' : 'opacity-50'} ${className}`}
+      style={{ zIndex: 0 }}
+    />
+  );
+};
+
+// Wrapper component for backward compatibility
 interface GradientBackgroundProps {
   className?: string;
 }
 
 const GradientBackground: React.FC<GradientBackgroundProps> = ({ className = "" }) => {
-  return (
-    <div
-      className={`fixed inset-0 bg-pms289 before:absolute before:h-[500px] before:w-[700px] before:left-1/2 before:top-[47%] before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full before:bg-gradient-radial before:from-pms1665 before:to-transparent before:blur-3xl before:content-[''] after:absolute after:-z-20 after:h-[400px] after:w-[600px] after:left-1/2 after:top-[47%] after:-translate-x-1/2 after:-translate-y-1/2 after:bg-gradient-conic after:from-pms1665 after:via-pms1665 after:to-transparent after:blur-3xl after:content-[''] before:dark:from-pms1665 before:dark:to-transparent before:dark:opacity-30 after:dark:from-pms1665 after:dark:via-pms1665 after:dark:to-transparent after:dark:opacity-40 before:lg:h-[600px] before:lg:w-[900px] after:lg:h-[500px] after:lg:w-[800px] ${className}`}
-    />
-  );
+  return <NeuralNetwork className={className} subtle={false} />;
 };
 
-export default GradientBackground; 
+export default GradientBackground;
+export { NeuralNetwork }; 

@@ -44,7 +44,7 @@ export default function HomePage() {
                 </span>
               </h2>
               <p className="m-0 max-w-[30ch] text-sm opacity-50 text-gray-700 dark:text-gray-300">
-                Create an account and get math help.
+                Create an account and get programming help.
               </p>
             </Link>
             

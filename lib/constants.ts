@@ -23,8 +23,8 @@ export const DEFAULT_USER_DATA = {
 };
 
 export const APP_CONFIG = {
-  name: 'Math.AI',
-  description: 'Learn math with AI!',
+  name: 'BirdBot',
+  description: 'Your AI programming assistant for CS concepts and debugging',
   logo: {
     width: 360,
     height: 74,
