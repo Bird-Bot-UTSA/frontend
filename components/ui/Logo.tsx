@@ -32,7 +32,7 @@ const Logo: React.FC<LogoProps> = ({
   return (
     <Image
       className={`relative drop-shadow-[0_0_0.3rem_#ffffff70] dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert transition-all duration-700 ${className}`}
-      src="/MathAI.png"
+      src="/BirdBot.png"
       alt={`${APP_CONFIG.name} Logo`}
       width={width}
       height={height}
