@@ -65,6 +65,7 @@ const LoginPage: React.FC = () => {
             if (response.success) {
                 // Store user data (including uid) in updateUser
                 const user = {
+                    name: formData.email.split('@')[0], // Use email prefix as name
                     email: formData.email,
                     uid: response.data.uid,
                     ...DEFAULT_USER_DATA
