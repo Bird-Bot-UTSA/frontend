@@ -1,139 +1,63 @@
-# GitHub Repository CI/CD Setup
+name: Deploy Frontend to ECS
 
-## 🔗 Connecting Your GitHub Repo to ECS
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
-Your GitHub repository at [https://github.com/MathAI-hq/frontend.git](https://github.com/MathAI-hq/frontend.git) can be connected to your ECS deployment for automatic updates.
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: birdbot-frontend
+  ECS_SERVICE: birdbot-service
+  ECS_CLUSTER: birdbot-cluster
+  ECS_TASK_DEFINITION: birdbot-task
+  CONTAINER_NAME: frontend
 
-## 📋 Setup Steps
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
 
-### Step 1: Add the Workflow to Your GitHub Repository
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
 
-1. **Copy the workflow file** to your GitHub repository:
-   - Copy `.github/workflows/deploy-frontend-github.yml` to your GitHub repo
-   - Place it in `.github/workflows/` directory
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
 
-2. **Or create it directly in GitHub**:
-   - Go to your GitHub repository
-   - Click "Actions" tab
-   - Click "New workflow"
-   - Copy the content from `deploy-frontend-github.yml`
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
 
-### Step 2: Add AWS Secrets to GitHub Repository
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # Build a docker container and push it to ECR
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-Go to your GitHub repository settings:
+    - name: Fill in the new image ID in the Amazon ECS task definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ${{ env.ECS_TASK_DEFINITION }}
+        container-name: ${{ env.CONTAINER_NAME }}
+        image: ${{ steps.build-image.outputs.image }}
 
-1. **Repository Settings** → **Secrets and variables** → **Actions**
-2. **New repository secret** and add:
-
-```
-AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
-AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-```
-
-### Step 3: Add Dockerfile to Your GitHub Repository
-
-Make sure your GitHub repository has a `Dockerfile` in the root directory. If it doesn't exist, copy it from your local project:
-
-```dockerfile
-# Dockerfile
-FROM node:20-alpine AS deps
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-
-FROM node:20-alpine AS build
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-RUN npm run build
-
-FROM node:20-alpine AS runtime
-WORKDIR /app
-ENV NODE_ENV=production
-COPY --from=build /app ./
-EXPOSE 3000
-CMD ["npm","run","start"]
-```
-
-## 🚀 How It Works
-
-### Automatic Deployment Process:
-
-1. **Push Code** to your GitHub repository (main/master branch)
-2. **GitHub Actions** automatically triggers
-3. **Builds** new Docker image with your changes
-4. **Pushes** image to ECR with unique tag (Git commit SHA)
-5. **Deploys** to ECS service
-6. **Updates** your live app
-
-### What Gets Deployed:
-
-- **ECR Repository**: `birdbot-frontend`
-- **ECS Cluster**: `birdbot-cluster`
-- **ECS Service**: `birdbot-service`
-- **ALB URL**: `https://<alb-dns-name>` (from terraform output)
-
-## 🧪 Testing the Deployment
-
-1. **Make a change** to your code in the GitHub repository
-2. **Commit and push**:
-   ```bash
-   git add .
-   git commit -m "Test deployment"
-   git push origin main
-   ```
-3. **Watch the deployment** in GitHub Actions tab
-4. **Check your app** at the ALB URL
-
-## 📊 Monitoring
-
-- **GitHub Actions**: Check the Actions tab in your repository
-- **ECS Console**: Monitor service health in AWS ECS console
-- **CloudWatch Logs**: View application logs at `/ecs/birdbot`
-
-## 🔧 Current Infrastructure
-
-Your ECS infrastructure is already set up with:
-- ✅ **ECR Repository**: `birdbot-frontend`
-- ✅ **ECS Cluster**: `birdbot-cluster`
-- ✅ **ECS Service**: `birdbot-service`
-- ✅ **ALB with HTTPS**: Ready for production
-- ✅ **IAM Roles**: Proper permissions configured
-
-## 🎯 Benefits
-
-- ✅ **Automatic Deployments**: Push code → Live app updates
-- ✅ **Zero Downtime**: Rolling deployments
-- ✅ **Version Control**: Each deployment tagged with Git commit
-- ✅ **Rollback Capability**: Easy to revert to previous versions
-- ✅ **Build Logs**: Full visibility in GitHub Actions
-
-## 🔄 Workflow Differences
-
-### Local Repository (Current):
-- Structure: `math-ai/frontend/`
-- Workflow: `deploy-frontend.yml`
-- Builds from: `frontend/` directory
-
-### GitHub Repository:
-- Structure: Root directory is frontend code
-- Workflow: `deploy-frontend-github.yml`
-- Builds from: Root directory
-
-## 🚨 Important Notes
-
-1. **Same Infrastructure**: Both workflows deploy to the same ECS service
-2. **Image Tags**: GitHub uses Git commit SHA, local uses `v1`
-3. **Task Definition**: GitHub creates dynamic task definition
-4. **Environment**: Both use the same environment variables
-
-## 🎊 Ready to Deploy!
-
-Once you've added the workflow and secrets to your GitHub repository:
-
-1. **Push any change** to trigger the first deployment
-2. **Watch GitHub Actions** for the build process
-3. **Visit your ALB URL** to see the updated app
-4. **Future pushes** will automatically deploy
-
-Your GitHub repository will now automatically deploy to your ECS infrastructure! 🚀
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: ${{ env.ECS_SERVICE }}
+        cluster: ${{ env.ECS_CLUSTER }}
+        wait-for-service-stability: true
