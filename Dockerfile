@@ -13,8 +13,6 @@ RUN npm run build
 FROM node:20-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
-# If you prefer, set NEXT_PUBLIC_API via ECS env vars (recommended)
-# ENV NEXT_PUBLIC_API=https://jyhcs69hk7.execute-api.us-east-1.amazonaws.com
 COPY --from=build /app ./
 EXPOSE 3000
 CMD ["npm","run","start"]
