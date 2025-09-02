@@ -13,6 +13,8 @@ env:
   ECS_CLUSTER: birdbot-cluster
   ECS_TASK_DEFINITION: birdbot-task
   CONTAINER_NAME: frontend
+  # Organization: Bird-Bot
+  # Repository: frontend
 
 jobs:
   deploy:
