@@ -62,7 +62,7 @@ const ChatPage: React.FC = () => {
             if (response.success && response.data) {
                 const aiMessage: Message = {
                     id: (Date.now() + 1).toString(),
-                    text: response.data.ai_response || 'I received your message but couldn\'t generate a response.',
+                    text: response.data.ai_response || 'I received your message but couldn&apos;t generate a response.',
                     isUser: false,
                     timestamp: new Date()
                 };
@@ -149,7 +149,7 @@ const ChatPage: React.FC = () => {
                     <Logo size="large" />
                     {!isChatActive && (
                         <p className="text-xl text-white-600 dark:text-white-400 font-mono text-center mt-2">
-                            Ask me any math question and I'll help you solve it!
+                            Ask me any math question and I&apos;ll help you solve it!
                         </p>
                     )}
                 </div>

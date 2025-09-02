@@ -146,7 +146,7 @@ const LoginPage: React.FC = () => {
 
                     <div className="mt-4 text-center">
                         <p className="text-gray-600 dark:text-gray-400 font-mono">
-                            Don't have an account?{' '}
+                            Don&apos;t have an account?{' '}
                             <Link 
                                 href="/signup" 
                                 className="text-blue-600 hover:text-blue-500 hover:underline font-mono"
