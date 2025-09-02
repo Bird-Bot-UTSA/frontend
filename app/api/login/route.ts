@@ -11,7 +11,22 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify(body),
     });
-    const result = await response.json();
+    let result;
+    try {
+      result = await response.json();
+    } catch (parseError) {
+      // If response is not JSON, get it as text
+      const textResult = await response.text();
+      console.log('Login API response (text):', textResult);
+      if (!response.ok) {
+        return NextResponse.json(
+          { error: textResult || 'Login failed' },
+          { status: response.status }
+        );
+      }
+      return NextResponse.json({ message: textResult });
+    }
+    
     console.log('Login API response:', result);
     if (!response.ok) {
       return NextResponse.json(

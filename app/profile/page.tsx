@@ -55,7 +55,7 @@ const ProfilePage: React.FC = () => {
                 <div className="flex items-center justify-between mb-8">
                     <Link 
                         href="/chat" 
-                        className="flex items-center text-gray-500 text-gray-400 hover:text-gray-700 hover:text-gray-200 hover:underline font-mono"
+                        className="flex items-center text-white/80 hover:text-white hover:underline font-mono"
                     >
                         <ArrowLeft className="w-4 h-4 mr-2" />
                         Back to Chat
@@ -71,7 +71,7 @@ const ProfilePage: React.FC = () => {
                 {/* Profile Card */}
                 <Card className="p-8">
                     <div className="flex items-center justify-between mb-6">
-                        <h1 className="text-2xl font-semibold text-gray-900 text-white font-mono">
+                        <h1 className="text-2xl font-semibold text-white font-mono">
                             Profile Settings
                         </h1>
                     </div>
@@ -79,14 +79,14 @@ const ProfilePage: React.FC = () => {
                     <div className="space-y-6">
                         {/* User Information */}
                         <div className="space-y-4">
-                            <h2 className="text-lg font-medium text-gray-900 text-white font-mono flex items-center">
+                            <h2 className="text-lg font-medium text-white font-mono flex items-center">
                                 <User className="w-5 h-5 mr-2" />
                                 Personal Information
                             </h2>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 text-gray-300 mb-2 font-mono">
+                                    <label className="block text-sm font-medium text-white mb-2 font-mono">
                                         Full Name
                                     </label>
                                     <div className="relative">
@@ -96,7 +96,7 @@ const ProfilePage: React.FC = () => {
                                                     type="text"
                                                     value={tempName}
                                                     onChange={(e) => setTempName(e.target.value)}
-                                                    className="flex-1 px-4 py-3 border border-gray-300 border-neutral-700 rounded-l-lg bg-transparent text-gray-900 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-2xl font-mono"
+                                                    className="flex-1 px-4 py-3 border border-white/30 rounded-l-lg bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm font-mono"
                                                     onKeyDown={(e) => {
                                                         if (e.key === 'Enter') {
                                                             handleNameSave();
@@ -121,7 +121,7 @@ const ProfilePage: React.FC = () => {
                                             </div>
                                         ) : (
                                             <div className="flex">
-                                                <div className="flex-1 px-4 py-3 bg-gray-50 bg-gray-800 rounded-l-lg text-gray-900 text-white font-mono border border-gray-300 border-neutral-700">
+                                                <div className="flex-1 px-4 py-3 bg-white/10 rounded-l-lg text-white font-mono border border-white/30">
                                                     {currentUser.name}
                                                 </div>
                                                 <button
@@ -136,10 +136,10 @@ const ProfilePage: React.FC = () => {
                                 </div>
                                 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 text-gray-300 mb-2 font-mono">
+                                    <label className="block text-sm font-medium text-white mb-2 font-mono">
                                         Email
                                     </label>
-                                    <p className="px-4 py-3 bg-gray-50 bg-gray-800 rounded-lg text-gray-900 text-white font-mono border border-gray-300 border-neutral-700">
+                                    <p className="px-4 py-3 bg-white/10 rounded-lg text-white font-mono border border-white/30">
                                         {currentUser.email}
                                     </p>
                                 </div>
@@ -148,7 +148,7 @@ const ProfilePage: React.FC = () => {
 
                         {/* Language Settings */}
                         <div className="space-y-4">
-                            <h2 className="text-lg font-medium text-gray-900 text-white font-mono flex items-center">
+                            <h2 className="text-lg font-medium text-white font-mono flex items-center">
                                 <Globe className="w-5 h-5 mr-2" />
                                 Language
                             </h2>
