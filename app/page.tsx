@@ -27,38 +27,38 @@ export default function HomePage() {
       </div>
 
       <div className="relative flex place-items-center mt-16">
-        <Logo size="large" priority={true} />
+        <Logo size="large" priority={true} className="scale-150" />
       </div>
       
       <div className="mb-0 flex flex-col lg:flex-row gap-6 justify-center items-center max-w-4xl mx-auto">
-        <div className="bg-white/10 bg-black/10 backdrop-blur-sm rounded-xl p-6 border border-gray-200 border-neutral-800 w-full">
+        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-lg w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Link
               href="/signup"
-              className="items-center place-items-center group rounded-lg border border-gray-300 border-neutral-700 px-6 py-4 transition-colors hover:border-gray-400 hover:bg-gray-100 hover:border-neutral-600 hover:bg-neutral-800 hover:bg-opacity-40 min-w-[160px]"
+              className="items-center place-items-center group rounded-lg border border-white/30 px-6 py-4 transition-colors hover:border-white/50 hover:bg-white/10 min-w-[160px]"
             >
-              <h2 className="mb-3 text-2xl font-semibold text-gray-900 text-white">
+              <h2 className="mb-3 text-2xl font-semibold text-white">
                 Sign up{' '}
                 <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                   -&gt;
                 </span>
               </h2>
-              <p className="m-0 max-w-[30ch] text-sm opacity-50 text-gray-700 text-gray-300">
+              <p className="m-0 max-w-[30ch] text-sm text-white/80">
                 Create an account and get programming help.
               </p>
             </Link>
             
             <Link
               href="/login"
-              className="place-items-center group rounded-lg border border-gray-300 border-neutral-700 px-6 py-4 transition-colors hover:border-gray-400 hover:bg-gray-100 hover:border-neutral-600 hover:bg-neutral-800 hover:bg-opacity-40 min-w-[160px]"
+              className="place-items-center group rounded-lg border border-white/30 px-6 py-4 transition-colors hover:border-white/50 hover:bg-white/10 min-w-[160px]"
             >
-              <h2 className="mb-3 text-2xl font-semibold text-gray-900 text-white">
+              <h2 className="mb-3 text-2xl font-semibold text-white">
                 Login{' '}
                 <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                   -&gt;
                 </span>
               </h2>
-              <p className="m-0 max-w-[30ch] text-sm opacity-50 text-gray-700 text-gray-300">
+              <p className="m-0 max-w-[30ch] text-sm text-white/80">
                 Log into an existing account.
               </p>
             </Link>
@@ -68,8 +68,8 @@ export default function HomePage() {
 
       {/* By Yash Verma & Rahul Paul - moved to bottom right */}
       <div className="fixed bottom-12 right-12 z-20">
-        <p className="flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl border-neutral-800 bg-zinc-800/30 from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:bg-zinc-800/30 font-mono text-sm text-gray-900 text-white">
-          By <a href="https://github.com/yash-yv-verma" target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-600 text-blue-400 mx-1">Yash Verma</a> & <a href="https://github.com/RPaul07" target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-600 text-blue-400 mx-1">Rahul Paul</a>&nbsp;
+        <p className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 px-4 py-2 shadow-lg font-mono text-sm text-white">
+          By <a href="https://github.com/yash-yv-verma" target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-300 mx-1">Yash Verma</a> & <a href="https://github.com/RPaul07" target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-300 mx-1">Rahul Paul</a>&nbsp;
         </p>
       </div>
     </main>

@@ -88,10 +88,10 @@ const LoginPage: React.FC = () => {
             <div className="z-10 w-full max-w-2xl">
                 <div className="text-center mb-6">
                     <Logo size="large" className="mx-auto mb-4" priority={true} />
-                    <h1 className="text-3xl font-bold text-gray-900 font-mono">
+                    <h1 className="text-3xl font-bold text-white font-mono">
                         Welcome Back
                     </h1>
-                    <p className="text-gray-600 mt-2 font-mono">
+                    <p className="text-white/80 mt-2 font-mono">
                         Sign in to continue learning
                     </p>
                 </div>
@@ -99,8 +99,8 @@ const LoginPage: React.FC = () => {
                 <Card className="p-6">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {errors.general && (
-                            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-                                <p className="text-red-600 dark:text-red-400 text-sm font-mono">
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                                <p className="text-red-600 text-sm font-mono">
                                     {errors.general}
                                 </p>
                             </div>
