@@ -88,10 +88,10 @@ const LoginPage: React.FC = () => {
             <div className="z-10 w-full max-w-2xl">
                 <div className="text-center mb-6">
                     <Logo size="large" className="mx-auto mb-4" priority={true} />
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-mono">
+                    <h1 className="text-3xl font-bold text-gray-900 font-mono">
                         Welcome Back
                     </h1>
-                    <p className="text-gray-600 dark:text-gray-400 mt-2 font-mono">
+                    <p className="text-gray-600 mt-2 font-mono">
                         Sign in to continue learning
                     </p>
                 </div>
@@ -145,7 +145,7 @@ const LoginPage: React.FC = () => {
                     </form>
 
                     <div className="mt-4 text-center">
-                        <p className="text-gray-600 dark:text-gray-400 font-mono">
+                        <p className="text-gray-600 font-mono">
                             Don&apos;t have an account?{' '}
                             <Link 
                                 href="/signup" 

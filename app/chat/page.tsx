@@ -125,7 +125,7 @@ const ChatPage: React.FC = () => {
             {/* User Name - Top Right */}
             {user && (
                 <div className="absolute top-8 right-32 z-30">
-                    <Link href="/profile" className="inline-flex items-center px-4 py-2 bg-white/10 dark:bg-black/10 backdrop-blur-sm rounded-full border border-gray-200/20 dark:border-gray-700/20 text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-black/20 transition-colors">
+                    <Link href="/profile" className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-gray-200/20 text-gray-700 hover:bg-white/20 transition-colors">
                         <User className="w-4 h-4 mr-2" />
                         {user.name}
                     </Link>
@@ -135,7 +135,7 @@ const ChatPage: React.FC = () => {
             {/* Divider Line - Only when chat is active */}
             {isChatActive && (
                 <div className="absolute top-24 left-0 right-0 z-20">
-                    <div className="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent mx-8"></div>
+                    <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-8"></div>
                 </div>
             )}
 
@@ -148,7 +148,7 @@ const ChatPage: React.FC = () => {
                 <div className="flex flex-col items-center">
                     <Logo size="large" />
                     {!isChatActive && (
-                        <p className="text-xl text-white-600 dark:text-white-400 font-mono text-center mt-2">
+                        <p className="text-xl text-white-600 font-mono text-center mt-2">
                             Ask me any math question and I&apos;ll help you solve it!
                         </p>
                     )}
@@ -178,12 +178,12 @@ const ChatPage: React.FC = () => {
                                     className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
                                         message.isUser
                                             ? 'bg-blue-600 text-white shadow-lg'
-                                            : 'bg-white/10 dark:bg-black/10 backdrop-blur-sm text-gray-900 dark:text-white border border-gray-200/20 dark:border-gray-700/20'
+                                            : 'bg-white/10 backdrop-blur-sm text-gray-900 border border-gray-200/20'
                                     }`}
                                 >
                                     <p className="text-sm">{message.text}</p>
                                     <p className={`text-xs mt-2 ${
-                                        message.isUser ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
+                                        message.isUser ? 'text-blue-100' : 'text-gray-500'
                                     }`}>
                                         {message.timestamp.toLocaleTimeString()}
                                     </p>
@@ -193,7 +193,7 @@ const ChatPage: React.FC = () => {
                         
                         {isTyping && (
                             <div className="flex justify-start">
-                                <div className="bg-white/10 dark:bg-black/10 backdrop-blur-sm text-gray-900 dark:text-white px-4 py-3 rounded-2xl border border-gray-200/20 dark:border-gray-700/20">
+                                <div className="bg-white/10 backdrop-blur-sm text-gray-900 px-4 py-3 rounded-2xl border border-gray-200/20">
                                     <div className="flex space-x-1">
                                         <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
                                         <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
@@ -208,7 +208,7 @@ const ChatPage: React.FC = () => {
                 )}
 
                 {/* Input Area */}
-                <div className="flex items-center space-x-4 bg-white/10 dark:bg-black/10 backdrop-blur-sm p-4 rounded-2xl border-2 border-gray-300 dark:border-gray-600 shadow-lg">
+                <div className="flex items-center space-x-4 bg-white/10 backdrop-blur-sm p-4 rounded-2xl border-2 border-gray-300 shadow-lg">
                     <input
                         ref={inputRef}
                         type="text"
@@ -217,7 +217,7 @@ const ChatPage: React.FC = () => {
                         onKeyPress={handleKeyPress}
                         onFocus={handleInputFocus}
                         placeholder="Ask a math question..."
-                        className="flex-1 px-4 py-3 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono border-0"
+                        className="flex-1 px-4 py-3 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono border-0"
                     />
                     <button
                         onClick={handleSendMessage}

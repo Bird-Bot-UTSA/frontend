@@ -75,7 +75,7 @@ const SignupPage: React.FC = () => {
                 user_name: formData.name.trim(),
                 user_email: formData.email,
                 user_password: formData.password,
-                user_age: formData.age ? parseInt(formData.age) : undefined,
+                user_age: formData.age ? parseInt(formData.age) : 18, // Default age if not provided
                 user_school: formData.school || undefined
             };
 
@@ -112,10 +112,10 @@ const SignupPage: React.FC = () => {
             <div className="z-10 w-full max-w-4xl">
                 <div className="text-center mb-6">
                     <Logo size="large" className="mx-auto mb-4" priority={true} />
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-mono">
+                    <h1 className="text-3xl font-bold text-gray-900 text-white font-mono">
                         Create Account
                     </h1>
-                    <p className="text-gray-600 dark:text-gray-400 mt-2 font-mono">
+                    <p className="text-gray-600 text-gray-400 mt-2 font-mono">
                         Join us to start learning
                     </p>
                 </div>
@@ -123,8 +123,8 @@ const SignupPage: React.FC = () => {
                 <Card className="p-6">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {errors.general && (
-                            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-                                <p className="text-red-600 dark:text-red-400 text-sm font-mono">
+                            <div className="bg-red-50 bg-red-900/20 border border-red-200 border-red-800 rounded-lg p-3">
+                                <p className="text-red-600 text-red-400 text-sm font-mono">
                                     {errors.general}
                                 </p>
                             </div>
@@ -241,7 +241,7 @@ const SignupPage: React.FC = () => {
                     </form>
 
                     <div className="mt-4 text-center">
-                        <p className="text-gray-600 dark:text-gray-400 font-mono">
+                        <p className="text-gray-600 text-gray-400 font-mono">
                             Already have an account?{' '}
                             <Link 
                                 href="/login" 
@@ -256,7 +256,7 @@ const SignupPage: React.FC = () => {
                 <div className="mt-4 text-center">
                     <Link 
                         href="/" 
-                        className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:underline font-mono"
+                        className="text-gray-500 text-gray-400 hover:text-gray-700 hover:text-gray-200 hover:underline font-mono"
                     >
                         ← Back to Home
                     </Link>
