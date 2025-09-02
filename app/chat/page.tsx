@@ -7,6 +7,7 @@ import { Send, User } from 'lucide-react';
 import { useTheme } from '../../lib/hooks/useTheme';
 import Logo from '../../components/ui/Logo';
 import GradientBackground from '../../components/ui/GradientBackground';
+import { apiClient } from '../../lib/api-client';
 
 
 interface Message {
@@ -40,7 +41,7 @@ const ChatPage: React.FC = () => {
     }, [isChatActive]);
 
     const handleSendMessage = async () => {
-        if (!inputValue.trim()) return;
+        if (!inputValue.trim() || !user?.email) return;
 
         const userMessage: Message = {
             id: Date.now().toString(),
@@ -50,20 +51,44 @@ const ChatPage: React.FC = () => {
         };
 
         setMessages(prev => [...prev, userMessage]);
+        const currentInput = inputValue.trim();
         setInputValue('');
         setIsTyping(true);
 
-        // Simulate AI response
-        setTimeout(() => {
-            const aiMessage: Message = {
+        try {
+            // Call the real API
+            const response = await apiClient.askMathQuestion(user.email, currentInput);
+
+            if (response.success && response.data) {
+                const aiMessage: Message = {
+                    id: (Date.now() + 1).toString(),
+                    text: response.data.ai_response || 'I received your message but couldn\'t generate a response.',
+                    isUser: false,
+                    timestamp: new Date()
+                };
+                setMessages(prev => [...prev, aiMessage]);
+            } else {
+                // Handle API error
+                const errorMessage: Message = {
+                    id: (Date.now() + 1).toString(),
+                    text: `Sorry, I encountered an error: ${response.error || 'Unknown error occurred'}. Please try again.`,
+                    isUser: false,
+                    timestamp: new Date()
+                };
+                setMessages(prev => [...prev, errorMessage]);
+            }
+        } catch (error) {
+            console.error('Error calling math API:', error);
+            const errorMessage: Message = {
                 id: (Date.now() + 1).toString(),
-                text: `I understand you're asking about: "${userMessage.text}". This is a simulated response. In a real implementation, I would help you with programming concepts, debug your code, explain algorithms, or assist with any CS-related questions you have.`,
+                text: 'Sorry, I encountered an error while processing your request. Please try again.',
                 isUser: false,
                 timestamp: new Date()
             };
-            setMessages(prev => [...prev, aiMessage]);
+            setMessages(prev => [...prev, errorMessage]);
+        } finally {
             setIsTyping(false);
-        }, 1500);
+        }
     };
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -124,7 +149,7 @@ const ChatPage: React.FC = () => {
                     <Logo size="large" />
                     {!isChatActive && (
                         <p className="text-xl text-white-600 dark:text-white-400 font-mono text-center mt-2">
-                            Start a conversation to get programming help
+                            Ask me any math question and I'll help you solve it!
                         </p>
                     )}
                 </div>
@@ -191,7 +216,7 @@ const ChatPage: React.FC = () => {
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyPress={handleKeyPress}
                         onFocus={handleInputFocus}
-                        placeholder="Type your message..."
+                        placeholder="Ask a math question..."
                         className="flex-1 px-4 py-3 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono border-0"
                     />
                     <button

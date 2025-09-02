@@ -45,6 +45,45 @@ export class APIClient {
     }
   }
 
+  // Method to call the OpenAI API for math questions
+  async askMathQuestion(userEmail: string, message: string): Promise<LambdaResponse> {
+    try {
+      console.log('Sending math question:', { userEmail, message });
+      
+      const response = await fetch(`${this.baseURL}/openai`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_email: userEmail,
+          message: message,
+        }),
+      });
+
+      console.log('Math API response status:', response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Math API response:', result);
+      
+      return {
+        success: true,
+        data: result,
+      };
+    } catch (error) {
+      console.error('Math API error:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
+  }
+
   // Example method for a specific Lambda function
   async callMathAI(prompt: string): Promise<LambdaResponse> {
     return this.callLambda('math-ai', { prompt });
